@@ -20,7 +20,7 @@ class Robot:
         self.moving_along_path = False
         self.path_index = 0
         self.direction = 1
-        self.speed = 1
+        self.speed = 2
         self.last_movement = None
         self.movement_press_count = 0
 
