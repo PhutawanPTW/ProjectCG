@@ -2,12 +2,13 @@ import pygame
 import math
 
 class Robot:
-    def __init__(self, x=None, y=None):
-        self.x = x if x is not None else 400
+    # constructor    
+    def __init__(self, x=None, y=None): 
+        self.x = x if x is not None else 400  # กลาง
         self.y = y if y is not None else 300
-        self.initial_x = self.x
+        self.initial_x = self.x  # reset position
         self.initial_y = self.y
-        self.angle = 0
+        self.angle = 0  # มุมเริ่มต้น (ชี้ขวา)
         self.path = [(self.x, self.y)]
         self.circle_path = []
         self.movement_generator = None
@@ -65,7 +66,7 @@ class Robot:
                 self.moving_along_path = False
                 self.path = [(self.x, self.y)]
                 self.circle_path = []
-                self.angle = -math.pi / 2  # รีเซ็ตหัวให้ชี้ขึ้นเมื่อหยุด
+                # ลบการรีเซ็ตมุม: self.angle = -math.pi / 2
             else:  # กดครั้งที่ 2, 4, 6, ... (เคลื่อนที่ต่อ)
                 self.set_movement(movement_func())
         else:
@@ -96,7 +97,7 @@ class Robot:
         self.circle_path = []
         self.movement_generator = None
         self.moving_along_path = False
-        self.angle = -math.pi / 2  # รีเซ็ตหัวให้ชี้ขึ้น
+        # ลบการรีเซ็ตมุม: self.angle = -math.pi / 2
 
     def update(self):
         if self.movement_generator and not self.moving_along_path:

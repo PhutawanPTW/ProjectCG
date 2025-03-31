@@ -25,22 +25,23 @@ FONT_TINY = pygame.font.Font(FONT_PATH, 24)
 
 robot = Robot()
 
-# กำหนดขนาดกรอบของรูปทรง (ความกว้างและความสูงเท่ากัน)
-WIDTH = 200  # ความกว้างของกรอบ (พิกเซล)
-HEIGHT = 200  # ความสูงของกรอบ (พิกเซล)
+# ขนาดกรอบของรูปทรง
+WIDTH = 150
+HEIGHT = 150
 
 # คำนวณขนาดสำหรับแต่ละรูปทรงให้อยู่ในกรอบขนาด WIDTH x HEIGHT
-circle_radius = min(WIDTH / 2, HEIGHT / 2)  # = 100 พิกเซล
-oval_a = WIDTH / 2  # = 100 พิกเซล
-oval_b = oval_a / 1.5  # ≈ 66.67 พิกเซล
-radius = min(WIDTH / 2, HEIGHT / 2)  # = 100 พิกเซล
-triangle_side = 2 * radius * math.tan(math.pi / 3)  # ≈ 346.41 พิกเซล
-square_side = 2 * radius  # = 200 พิกเซล
-pentagon_side = 2 * radius * math.tan(math.pi / 5)  # ≈ 137.64 พิกเซล
-hexagon_side = 2 * radius * math.tan(math.pi / 6)  # ≈ 115.47 พิกเซล
-heptagon_side = 2 * radius * math.tan(math.pi / 7)  # ≈ 101.15 พิกเซล
-octagon_side = 2 * radius * math.tan(math.pi / 8)  # ≈ 90.51 พิกเซล
-straight_length = WIDTH  # = 200 พิกเซล
+circle_radius = min(WIDTH / 2, HEIGHT / 2)  # = 75 พิกเซล
+oval_a = WIDTH / 2  # = 75 พิกเซล
+oval_b = oval_a / 1.5  # ≈ 50 พิกเซล
+radius = min(WIDTH / 2, HEIGHT / 2)  # = 75 พิกเซล
+triangle_side = 2 * radius * math.tan(math.pi / 3)  # ≈ 130.90 พิกเซล
+square_side = 2 * radius  # = 150 พิกเซล
+pentagon_side = 2 * radius * math.tan(math.pi / 5)  # ≈ 96.59 พิกเซล
+hexagon_side = 2 * radius * math.tan(math.pi / 6)  # ≈ 87.30 พิกเซล
+heptagon_side = 2 * radius * math.tan(math.pi / 7)  # ≈ 78.17 พิกเซล
+octagon_side = 2 * radius * math.tan(math.pi / 8)  # ≈ 71.65 พิกเซล
+straight_length = WIDTH  # = 150 พิกเซล
+
 
 # สร้างลิสต์ patterns สำหรับแต่ละรูปทรง
 patterns = [
@@ -61,9 +62,12 @@ buttons = create_buttons(robot, patterns)
 swatches = None
 
 try:
-    background_image = pygame.image.load("assets/network_background.png").convert_alpha()
+    background_image = pygame.image.load(
+        "assets/network_background.png"
+    ).convert_alpha()
 except:
     background_image = None
+
 
 def draw_text_with_glow(text, x, y, font, screen, text_color, glow_color):
     text_surface = font.render(text, True, text_color)
@@ -73,32 +77,75 @@ def draw_text_with_glow(text, x, y, font, screen, text_color, glow_color):
             screen.blit(glow_surface, (x + dx, y + dy))
     screen.blit(text_surface, (x, y))
 
-def draw_simple_robot(screen, x, y, scale=1.0):
-    head_width = int(60 * scale)
-    head_height = int(50 * scale)
-    eye_size = int(8 * scale)
-    ear_size = int(20 * scale)
-    leg_size = int(20 * scale)
-    antenna_height = int(20 * scale)
-    antenna_tip_size = int(5 * scale)
 
-    head_rect = pygame.Rect(x - head_width // 2, y - head_height // 2, head_width, head_height)
-    pygame.draw.rect(screen, TECH_BLUE, head_rect, border_radius=10)
+def draw_simple_robot(screen, center_x, center_y, scale=1):
+    # สีหลักของหุ่นยนต์
+    robot_color = (150, 200, 255)  # สีฟ้าอ่อน
+    eye_color = (255, 255, 255)  # สีขาวสำหรับตา
+    antenna_color = (200, 200, 200)  # สีเทาสำหรับเสาอากาศ
 
-    pygame.draw.line(screen, TECH_BLUE, (x, y - head_height // 2), (x, y - head_height // 2 - antenna_height), 2)
-    pygame.draw.circle(screen, TECH_BLUE, (x, y - head_height // 2 - antenna_height), antenna_tip_size)
+    # หัว (สี่เหลี่ยม)
+    head_size = 60 * scale  # ขนาดหัว
+    head_rect = pygame.Rect(
+        center_x - head_size // 2, center_y - head_size // 2, head_size, head_size
+    )
+    pygame.draw.rect(screen, robot_color, head_rect)
 
-    eye_offset_x = int(15 * scale)
-    eye_y = y - int(5 * scale)
-    pygame.draw.circle(screen, WHITE, (x - eye_offset_x, eye_y), eye_size)
-    pygame.draw.circle(screen, WHITE, (x + eye_offset_x, eye_y), eye_size)
+    # ตา (วงกลมสองข้าง)
+    eye_radius = 10 * scale
+    eye_offset_x = 15 * scale  # ระยะห่างตาจากกึ่งกลาง
+    left_eye_pos = (center_x - eye_offset_x, center_y)
+    right_eye_pos = (center_x + eye_offset_x, center_y)
+    pygame.draw.circle(screen, eye_color, left_eye_pos, eye_radius)
+    pygame.draw.circle(screen, eye_color, right_eye_pos, eye_radius)
 
-    pygame.draw.circle(screen, TECH_BLUE, (x - head_width // 2 - ear_size // 2, y - head_height // 2), ear_size, draw_top_left=True, draw_bottom_left=True)
-    pygame.draw.circle(screen, TECH_BLUE, (x + head_width // 2 + ear_size // 2, y - head_height // 2), ear_size, draw_top_right=True, draw_bottom_right=True)
+    # หู (ครึ่งวงกลมสองข้าง)
+    ear_radius = 25 * scale
+    left_ear_pos = (center_x - head_size // 2, center_y)
+    right_ear_pos = (center_x + head_size // 2, center_y)
+    pygame.draw.circle(
+        screen,
+        robot_color,
+        left_ear_pos,
+        ear_radius,
+        0,
+        draw_top_left=True,
+        draw_bottom_left=True,
+    )
+    pygame.draw.circle(
+        screen,
+        robot_color,
+        right_ear_pos,
+        ear_radius,
+        0,
+        draw_top_right=True,
+        draw_bottom_right=True,
+    )
 
-    leg_y_offset = int(5 * scale)
-    pygame.draw.circle(screen, TECH_BLUE, (x - head_width // 4, y + head_height // 2 + leg_y_offset), leg_size, draw_bottom_left=True, draw_bottom_right=True)
-    pygame.draw.circle(screen, TECH_BLUE, (x + head_width // 4, y + head_height // 2 + leg_y_offset), leg_size, draw_bottom_left=True, draw_bottom_right=True)
+    # เสาอากาศ
+    antenna_height = 20 * scale
+    pygame.draw.line(
+        screen,
+        antenna_color,
+        (center_x, center_y - head_size // 2),
+        (center_x, center_y - head_size // 2 - antenna_height),
+        3,
+    )
+    pygame.draw.circle(
+        screen, antenna_color, (center_x, center_y - head_size // 2 - antenna_height), 5
+    )
+
+    # ขา (ปรับให้เหลือขาเดียว)
+    leg_width = 20 * scale
+    leg_height = 30 * scale  # เพิ่มความยาวขาให้สมส่วน
+    leg_pos = (center_x - leg_width // 2, center_y + head_size // 2)  # จัดให้อยู่กึ่งกลาง
+    leg_points = [
+        (leg_pos[0], leg_pos[1]),  # จุดซ้าย
+        (leg_pos[0] + leg_width, leg_pos[1]),  # จุดขวา
+        (leg_pos[0] + leg_width // 2, leg_pos[1] + leg_height),  # จุดล่าง (ขาเดียว)
+    ]
+    pygame.draw.polygon(screen, robot_color, leg_points)
+
 
 def start_screen():
     global screen, background_image, FONT, FONT_SMALL, FONT_TINY, SCREEN_WIDTH, SCREEN_HEIGHT
@@ -119,7 +166,7 @@ def start_screen():
             SCREEN_WIDTH // 2 - int(120 * font_scale),
             int(SCREEN_HEIGHT * 0.75),
             int(240 * font_scale),
-            int(70 * font_scale)
+            int(70 * font_scale),
         )
 
         for event in pygame.event.get():
@@ -128,7 +175,9 @@ def start_screen():
                 sys.exit()
             if event.type == pygame.VIDEORESIZE:
                 SCREEN_WIDTH, SCREEN_HEIGHT = event.w, event.h
-                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
+                screen = pygame.display.set_mode(
+                    (SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE
+                )
                 if background_image:
                     background_image_scaled = pygame.transform.smoothscale(
                         background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -140,7 +189,14 @@ def start_screen():
 
         # วาดภาพพื้นหลัง
         if background_image:
-            screen.blit(background_image_scaled if 'background_image_scaled' in locals() else background_image, (0, 0))
+            screen.blit(
+                (
+                    background_image_scaled
+                    if "background_image_scaled" in locals()
+                    else background_image
+                ),
+                (0, 0),
+            )
         else:
             screen.fill(BG_COLOR)
 
@@ -149,7 +205,9 @@ def start_screen():
         robot_surface = FONT.render(robot_text, True, WHITE)
         robot_x = SCREEN_WIDTH // 2 - robot_surface.get_width() // 2
         robot_y = int(SCREEN_HEIGHT * 0.2)
-        draw_text_with_glow(robot_text, robot_x, robot_y, FONT, screen, WHITE, GLOW_COLOR)
+        draw_text_with_glow(
+            robot_text, robot_x, robot_y, FONT, screen, WHITE, GLOW_COLOR
+        )
 
         # วาดหุ่นยนต์
         robot_pos_y = int(SCREEN_HEIGHT * 0.45)
@@ -160,21 +218,37 @@ def start_screen():
         subtitle_surface = FONT_TINY.render(subtitle_text, True, TECH_BLUE)
         subtitle_x = SCREEN_WIDTH // 2 - subtitle_surface.get_width() // 2
         subtitle_y = robot_pos_y + int(80 * scale)
-        draw_text_with_glow(subtitle_text, subtitle_x, subtitle_y, FONT_TINY, screen, TECH_BLUE, GLOW_COLOR)
+        draw_text_with_glow(
+            subtitle_text,
+            subtitle_x,
+            subtitle_y,
+            FONT_TINY,
+            screen,
+            TECH_BLUE,
+            GLOW_COLOR,
+        )
 
         # วาดปุ่ม "START"
         mouse_pos = pygame.mouse.get_pos()
         mouse_hover = start_button.collidepoint(mouse_pos)
-        pygame.draw.rect(screen, (150, 200, 255) if mouse_hover else TECH_BLUE, start_button, border_radius=10)
+        pygame.draw.rect(
+            screen,
+            (150, 200, 255) if mouse_hover else TECH_BLUE,
+            start_button,
+            border_radius=10,
+        )
         start_text = "START"
         start_surface = FONT_SMALL.render(start_text, True, WHITE)
         start_x = start_button.centerx - start_surface.get_width() // 2
         start_y = start_button.centery - start_surface.get_height() // 2
-        draw_text_with_glow(start_text, start_x, start_y, FONT_SMALL, screen, WHITE, GLOW_COLOR)
+        draw_text_with_glow(
+            start_text, start_x, start_y, FONT_SMALL, screen, WHITE, GLOW_COLOR
+        )
 
         pygame.display.flip()
 
     return True
+
 
 # ลูปหลัก
 show_start = True
@@ -229,7 +303,7 @@ while running:
                             robot.set_current_movement(button.action)
                             robot.set_visible(True)
                     break
-            
+
             if not clicked_on_button:
                 robot.move_to(mouse_pos[0], mouse_pos[1])
                 robot.set_visible(True)
@@ -240,15 +314,17 @@ while running:
             if event.key == pygame.K_w:
                 robot.angle = -math.pi / 2  # ชี้ขึ้น
             elif event.key == pygame.K_s:
-                robot.angle = math.pi / 2   # ชี้ลง
+                robot.angle = math.pi / 2  # ชี้ลง
             elif event.key == pygame.K_a:
-                robot.angle = math.pi       # ชี้ซ้าย
+                robot.angle = math.pi  # ชี้ซ้าย
             elif event.key == pygame.K_d:
-                robot.angle = 0             # ชี้ขวา
+                robot.angle = 0  # ชี้ขวา
         elif event.type == pygame.VIDEORESIZE:
             # อัพเดตขนาดหน้าจอเมื่อมีการปรับขนาด
             SCREEN_WIDTH, SCREEN_HEIGHT = event.w, event.h
-            screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
+            screen = pygame.display.set_mode(
+                (SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE
+            )
             if background_image:
                 background_image_scaled = pygame.transform.smoothscale(
                     background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
